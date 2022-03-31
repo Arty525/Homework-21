@@ -15,6 +15,8 @@ void add(std::ofstream& file, statement& entry) {
 	std::getline(std::cin, entry.name);
 
 	std::cout << "Enter date: ";
+	
+	std::cin.ignore();
 
 	std::getline(std::cin, entry.date);
 
