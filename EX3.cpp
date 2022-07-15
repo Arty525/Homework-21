@@ -63,16 +63,10 @@ void subtract(vec v1, vec v2) {
 	std::cout << "The vector difference is {" << firstPoint << ";" << secondPoint << "}" << std::endl;
 }
 
-//AB = { Bx - Ax; By - Ay } = { 5 - 2; 5 - 2 } = { 3; 3 }
-//
-//CD = { Dx - Cx; Dy - Cy } = { 4 - 3; 4 - 3 } = { 1; 1 }
-//
-//Найдем значение суммы(разности) векторов:
-//
-//AB - CD = { ABx - CDx; ABy - CDy } = { 3 - 1; 3 - 1 } = { 2; 2 }
-
-void scale() {
-
+void scale(vec v, int n) {
+	int firstPoint = 5 * (v.bx - v.ax);
+	int secondPoint = 5 * (v.by - v.ay);
+	std::cout << "Result: {" << firstPoint << ";" << secondPoint << "}" << std::endl;
 }
 
 void length(vec v) {
@@ -80,8 +74,11 @@ void length(vec v) {
 	std::cout << "The length of the vector AB is " << fabs(length) << std::endl;
 }
 
-void normalize() {
-
+void normalize(vec v) {
+	double length = sqrt(pow((v.bx - v.ax), 2) + pow((v.by - v.ay), 2));
+	double firstPoint = v.ax / fabs(length);
+	double secondPoint = v.bx / fabs(length);
+	std::cout << "Result: {" << firstPoint << ";" << secondPoint << "}" << std::endl;
 }
 
 int main() {
@@ -108,6 +105,10 @@ int main() {
 			add(v[counter], px);
 			++counter;
 			view(px);
+			std::cout << "Vector list:" << std::endl;
+			for (int i = 0; i < v.size(); ++i) {
+				std::cout << v[i].name << std::endl;
+			}
 		}
 		else if (command == "subtract") {
 			std::string v1name;
@@ -117,33 +118,48 @@ int main() {
 			std::cin.ignore(1024, '\n');
 			std::cout << "Enter name of second vector: ";
 			getline(std::cin,v2name);
-			
-			std::cout << v1name << std::endl << v2name << std::endl;
-
 			for (int i = 0; i < v.size(); ++i) {
-				std::cout << v[i].name << std::endl;
-				if (v1name == v[i].name) {
-					for (int j = 0; j < v.size(); ++j) {
-						std::cout << v[j].name << std::endl;
-						if (v2name == v[j].name) {
+				bool vecFound1 = false;
+				bool vecFound2 = false;
+				if (v[i].name == v1name) {
+					vecFound1 = true;
+					for (int j = 0; j <= v.size(); ++j) {
+						if (v[j].name == v2name) {
+							vecFound2 = true;
 							subtract(v[i], v[j]);
-						}
-						else {
-							std::cout << "Vector not found2.";
 							break;
 						}
-						break;
+						else if (!vecFound2 && j >= v.size() - 1) {
+							std::cerr << "Error code: VS0002. Vector not found.";
+						}
 					}
 					break;
 				}
-				else {
-					std::cout << "Vector not found1.";
+				else if (!vecFound1 && i >= v.size() - 1) {
+					std::cerr << "Error code: VS0001. Vector not found.";
 					break;
 				}
 			}
 		}
 		else if (command == "scale") {
-			scale();
+			std::string vname;
+			int n;
+			std::cout << "Enter name of vector: ";
+			std::cin >> vname;
+			std::cin.ignore(1024, '\n');
+			std::cout << "Enter number: ";
+			std::cin >> n;
+			for (int i = 0; i < v.size(); ++i) {
+				bool vecFound = false;
+				if (v[i].name == vname) {
+					vecFound = true;
+					scale(v[i], n);
+				}
+				else if (!vecFound && i >= v.size() - 1) {
+					std::cerr << "Error code: VS0003. Vector not found.";
+					break;
+				}
+			}
 		}
 		else if (command == "length") {
 			std::string vname;
@@ -155,15 +171,28 @@ int main() {
 					break;
 				}
 				else {
-					std::cout << "Vector not found" << std::endl;
+					std::cerr << "Error code: VS0004. Vector not found." << std::endl;
 				}
 			}
 		}
 		else if (command == "normalize") {
-			normalize();
+			std::string vname;
+			std::cout << "Enter vector name: ";
+			std::cin >> vname;
+			bool vecFound = false;
+			for (int i = 0; i < v.size(); ++i) {
+				if (v[i].name == vname) {
+					vecFound = true;
+					normalize(v[i]);
+				}
+				else if (!vecFound && i >= v.size() - 1) {
+					std::cerr << "Error code: VS0005. Vector not found.";
+					break;
+				}
+			}
 		}
 		else if(command != "exit") {
-			std::cout << "Unknown command! Try again." << std::endl;
+			std::cerr << "Error code: C0001. Unknown command! Try again." << std::endl;
 		}
 	} while (command != "exit");
 	return 0;
